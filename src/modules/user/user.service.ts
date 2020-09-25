@@ -14,6 +14,11 @@ export class UserService {
     return user;
   }
 
+  async updateData(payload): Promise<any> {
+    const data = await this.userModel.findOneAndUpdate({ userid: payload.userid}, payload, { useFindAndModify : false});
+    return data;
+  }
+
   async getUsers(): Promise<[]> {
     return await this.userModel.find().exec();
   }
@@ -41,5 +46,10 @@ export class UserService {
     } catch (error) {
       throw error;
     }
+  }
+
+  async deleteUser(id): Promise<any> {
+    const user = await this.userModel.findOneAndDelete({ userid: id}, { useFindAndModify : false});
+    return user;
   }
 }

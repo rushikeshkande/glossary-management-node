@@ -7,5 +7,11 @@ export const UserSchema = new mongoose.Schema({
     email: String,
     contactNo: String,
     username: String,
-    password: String
+    password: String,
+    profileURL: String,
+    GSTNO: String,
+    PAN: String,
+    userid: Number,
+    storeid: Number,
+    aadharNo: String
 })
