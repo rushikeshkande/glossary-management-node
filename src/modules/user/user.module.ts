@@ -23,7 +23,8 @@ export class StudentModule {
         { path: '/user/add-user', method: RequestMethod.POST },
         { path: '/user/all-users', method: RequestMethod.GET},
         { path: '/user/update', method: RequestMethod.POST},
-        { path: '/user/delete/:id', method: RequestMethod.DELETE}
+        { path: '/user/delete/:id', method: RequestMethod.DELETE},
+        {path: '/user/upload', method: RequestMethod.POST}
       )
       .forRoutes(UserController);
   }

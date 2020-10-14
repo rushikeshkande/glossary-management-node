@@ -1,29 +1,40 @@
 import * as jsonwebtoken from 'jsonwebtoken';
-import {
-  NestMiddleware,
-  HttpException,
-  Injectable,
-} from '@nestjs/common';
+import { NestMiddleware, HttpException, Injectable, HttpStatus } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
+import { FIELDS } from 'src/utils/constants/constant';
+import { ERROR_MESSAGE } from '../utils/constants/errorMessages';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
-    try {
-      if (req.headers['authorization']) {
+    if (req.headers[FIELDS.AUTH_HEADER_KEY]) {
+      try {
         const decoded = jsonwebtoken.verify(
-          req.headers['authorization'],
-          'Shh5QDtcBmymJFJUKVUy2y02',
+          req.headers.authorization,
+          process.env.JWT_SECRETE_TOKEN,
         );
-        if(decoded) {
-            next();
-            return;
+        console.log("decoded",decoded);
+        if (decoded) {
+          next();
+          return;
+        } else {
+        throw new HttpException(
+          ERROR_MESSAGE.UNAUTHORIZED,
+          HttpStatus.UNAUTHORIZED,
+        );
         }
-        throw new HttpException('Unauthorized User', 401);
+      } catch (error) {
+        // tslint:disable-next-line:no-console
+        console.log('**Token Error', error);
+        throw new HttpException(
+          ERROR_MESSAGE.UNAUTHORIZED,
+          HttpStatus.UNAUTHORIZED,
+        );
       }
-    } catch (error) {
-      console.log('token error', error);
-      throw new HttpException('Unauthorized User', 401);
     }
+    throw new HttpException(
+      ERROR_MESSAGE.UNAUTHORIZED,
+      HttpStatus.UNAUTHORIZED,
+    );
   }
 }

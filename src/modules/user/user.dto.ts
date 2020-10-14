@@ -7,9 +7,6 @@ export class AddUser {
     @ApiModelProperty({ description: 'user last name'})
     lastName: number;
 
-    @ApiModelProperty({ description: 'user store name'})
-    storeName: string;
-
     @ApiModelProperty({ description: 'user mail id'})
     email: string;
 
@@ -21,24 +18,6 @@ export class AddUser {
 
     @ApiModelProperty({ description: 'user password'})
     password: string;
-
-    @ApiModelProperty({ description: 'user profile URL'})
-    profileURL: string;
-
-    @ApiModelProperty({ description: 'GST no.'})
-    GSTNO: string;
-
-    @ApiModelProperty({ description: 'PAN no.'})
-    PAN: string;
-
-    @ApiModelProperty({ description: 'store user id'})
-    userid: number;
-
-    @ApiModelProperty({ description: 'store id'})
-    storeid: number;
-
-    @ApiModelProperty({ description: 'aadhar no.'})
-    aadharNo: string;
 }
 
 export class Login {
@@ -51,5 +30,5 @@ export class Login {
 
 export class DeleteUser {
     @ApiModelProperty({ description: "user id"})
-    userid: number
+    username: string
 }

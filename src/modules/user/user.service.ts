@@ -1,21 +1,41 @@
 import { Model } from 'mongoose';
-import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { hashSync, compareSync } from 'bcryptjs';
 import * as jsonwebtoken from 'jsonwebtoken';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Req,
+  Res,
+} from '@nestjs/common';
+import { awsupload } from 'src/utils/fileUpload';
+import { S3 } from 'aws-sdk';
+import { FIELDS } from 'src/utils/constants/constant';
 
 @Injectable()
 export class UserService {
   constructor(@InjectModel('user') private readonly userModel: Model) {}
 
   async create(payload): Promise<any> {
+    const existingUser = await this.userModel.findOne({
+      email: payload.email,
+    });
+    if (existingUser) {
+      return false;
+    }
     payload.password = hashSync(payload.password, 10);
     const user = await this.userModel.create({ ...payload });
+    user.password = null;
     return user;
   }
 
   async updateData(payload): Promise<any> {
-    const data = await this.userModel.findOneAndUpdate({ userid: payload.userid}, payload, { useFindAndModify : false});
+    const data = await this.userModel.findOneAndUpdate(
+      { userid: payload.userid },
+      payload,
+      { useFindAndModify: false },
+    );
     return data;
   }
 
@@ -25,23 +45,32 @@ export class UserService {
 
   async login(payload): Promise<any> {
     try {
-        console.log(">>>>>payload",payload);
       const existUser = await this.userModel.findOne({
         username: payload.username,
       });
-      console.log(existUser);
       if (existUser) {
-        if (
-          compareSync(payload.password, existUser.password)
-        ) {
-            const payloadfortoken = {username: payload.username}
-            const token = jsonwebtoken.sign(payloadfortoken, 'Shh5QDtcBmymJFJUKVUy2y02');
-          return { message: 'you have successfully logged in!', authorizationToken: token };
+        if (compareSync(payload.password, existUser.password)) {
+          const payloadfortoken = { username: payload.username };
+          const token = jsonwebtoken.sign(
+            payloadfortoken,
+            process.env.JWT_SECRETE_TOKEN,
+          );
+          return {
+            userData: existUser,
+            [FIELDS.AUTH_HEADER_KEY]: token,
+            status: HttpStatus.OK,
+          };
         } else {
-          return { message: 'you have entered wrong password!' };
+          throw new HttpException(
+            'Wrong credentials provided',
+            HttpStatus.BAD_REQUEST,
+          );
         }
       } else {
-          return { message: 'you are not registered with us!'};
+        throw new HttpException(
+          'User with this email does not exist',
+          HttpStatus.NOT_FOUND,
+        );
       }
     } catch (error) {
       throw error;
@@ -49,7 +78,33 @@ export class UserService {
   }
 
   async deleteUser(id): Promise<any> {
-    const user = await this.userModel.findOneAndDelete({ userid: id}, { useFindAndModify : false});
+    const user = await this.userModel.findOneAndDelete(
+      { userid: id },
+      { useFindAndModify: false },
+    );
     return user;
+  }
+
+  async upload(file) {
+    const { originalname } = file;
+    const bucketS3 = "backend-practice-123";
+    const s3 = new S3({
+      accessKeyId: "AKIAWWV3XBVBOOQKJ4F7",
+      secretAccessKey: "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",
+      region: "ap-south-1"
+    });
+    const params = {
+      Bucket: bucketS3,
+      Key: String(originalname),
+      Body: file.buffer,
+    };
+    return new Promise((resolve, reject) => {
+      s3.upload(params, (err, data) => {
+        if (err) {
+          reject(err.message);
+        }
+        resolve(data);
+      });
+    });
   }
 }
