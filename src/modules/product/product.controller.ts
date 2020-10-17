@@ -3,7 +3,9 @@ import {
   Get,
   Post,
   Body,
-  Res} from '@nestjs/common';
+  Res,
+  UseGuards} from '@nestjs/common';
+import { AuthGuard} from '@nestjs/passport';
 import { ApiOperation } from '@nestjs/swagger';
 import { Response } from 'express';
 import { ProductService } from './product.service';
@@ -13,7 +15,8 @@ import { AddProduct } from './product.dto';
 export class ProductController {
     constructor(private readonly productService: ProductService) {}
 
-  @Get()
+  @Get('/mine')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ title: 'Get all products' })
   async getAllProducts(@Res() res: Response): Promise<any> {
     const details = await this.productService.getProducts();
