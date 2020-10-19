@@ -22,4 +22,9 @@ export class ProductService {
     const result = await this.productModel.create({ ...payload });
     return result;
   }
+
+  async getProductById(id): Promise<[]> {
+    const result = await this.productModel.findOne({ _id : id});
+    return result;
+  }
 }
