@@ -5,7 +5,7 @@ export const ProductSchema = new mongoose.Schema({
     size: String,
     color: String,
     price: Number,
-    quantity: Number,
+    quantity: {type: Number, default: 1},
     discount: Number,
-    productImage: String
+    productImage: {type: String, default: null}
 })

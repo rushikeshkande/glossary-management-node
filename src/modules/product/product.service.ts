@@ -1,13 +1,8 @@
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import {
-  HttpException,
-  HttpStatus,
   Injectable,
-  Req,
-  Res,
 } from '@nestjs/common';
-import { ProductModule } from './product.module';
 
 
 @Injectable()
@@ -23,7 +18,7 @@ export class ProductService {
     return result;
   }
 
-  async getProductById(id): Promise<[]> {
+  async getProductById(id): Promise<any> {
     const result = await this.productModel.findOne({ _id : id});
     return result;
   }
