@@ -24,8 +24,8 @@ export class RegisterDTO {
   @ApiModelProperty({ description: 'user contact no.', required: true})
   contactNo: number;
 
-  @ApiModelProperty({ description: 'user profile URL', required: true})
-  profile: string;
+  @ApiModelProperty({ description: 'user profile image', required: true})
+  file: any;
 }
 
 export interface Payload {

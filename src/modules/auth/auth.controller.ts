@@ -1,4 +1,13 @@
-import { Body, Controller, Post, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiOperation, ApiConsumes, ApiImplicitFile } from '@nestjs/swagger';
 import { UserService } from '../../shared/user.service';
 import { Payload } from './auth.dto';
 import { LoginDTO, RegisterDTO } from './auth.dto';
@@ -23,13 +32,17 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(@Body() userDTO: RegisterDTO) {
-    const user = await this.userService.create(userDTO);
-    const payload: Payload = {
-      email: user.email,
-      id: user._id,
-    };
-    const token = await this.authService.signPayload(payload);
-    return { user, token };
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ title: 'user registration' })
+  @ApiConsumes('multipart/form-data')
+  @ApiImplicitFile({ name: 'file', required: true })
+  async register(@UploadedFile() file, @Body() userDTO: RegisterDTO) {
+      const user = await this.userService.create(userDTO,file);
+      const payload: Payload = {
+        email: user.email,
+        id: user._id,
+      };
+      const token = await this.authService.signPayload(payload);
+      return { user, token };
   }
 }

@@ -2,19 +2,25 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcryptjs';
 import { Model } from 'mongoose';
+import { awsupload } from 'src/utils/fileUpload';
 import { LoginDTO, RegisterDTO } from '../modules/auth/auth.dto';
 import { Payload } from '../modules/auth/auth.dto';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel('user') private userModel: Model) {}
+  constructor(
+    @InjectModel('user') private userModel: Model) {}
 
-  async create(userDTO: RegisterDTO) {
+  async create(userDTO: RegisterDTO,file:any) {
     const { email } = userDTO;
     const user = await this.userModel.findOne({ email });
     if (user) {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     }
+    if(file) {
+      const fileData:any = await awsupload(file);
+      userDTO["profile"] = fileData.Location;
+    } 
     const createdUser = new this.userModel(userDTO);
     await createdUser.save();
     return this.sanitizeUser(createdUser);
