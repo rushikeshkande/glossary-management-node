@@ -4,32 +4,24 @@ export class AddToCartDTO {
     @ApiModelProperty({ description: 'user ID'})
     userId: number;
 
-    @ApiModelProperty({ description: 'product price'})
-    price: number;
-
     @ApiModelProperty({ description: 'product id'})
     productId: number;
 
-    @ApiModelProperty({ description: 'product quantity'})
-    quantity: number;
+    @ApiModelProperty({ description: 'product price'})
+    price: number;
+
+    @ApiModelProperty({ description: 'product old price'})
+    oldPrice: number;
+
+    @ApiModelProperty({ description: 'product name'})
+    productName: string;
 
     @ApiModelProperty({ description: 'product discount'})
     discount: number;
 
-    @ApiModelProperty({ description: 'is product in cart active ?'})
-    isActive: boolean;
+    @ApiModelProperty({ description: 'product image'})
+    productImage: string;
 };
-
-export class UpdateQuantityDTO {
-    @ApiModelProperty({ description: 'user ID'})
-    userId: number;
-
-    @ApiModelProperty({ description: 'product id'})
-    productId: number;
-
-    @ApiModelProperty({ description: 'product quantity'})
-    quantity: number;
-}
 
 export class DeleteProductDTO {
     @ApiModelProperty({ description: 'user ID'})

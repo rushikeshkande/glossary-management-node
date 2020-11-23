@@ -10,12 +10,13 @@ import {
   Param,
   Put,
   Delete,
+  Query
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation } from '@nestjs/swagger';
 import { Response } from 'express';
 import { CartService } from './cart.service';
-import { AddToCartDTO, UpdateQuantityDTO, DeleteProductDTO } from './cart.dto';
+import { AddToCartDTO } from './cart.dto';
 
 @Controller('cart')
 export class CartController {
@@ -41,25 +42,13 @@ export class CartController {
     }
   }
 
-  @Put('/quantity/update')
-  @UseGuards(AuthGuard('jwt'))
-  @ApiOperation({ title: 'increment product quantity' })
-  async incrementQuantity(@Body() body: UpdateQuantityDTO): Promise<any> {
-    try {
-      const result = await this.CartService.incrementProductQuantity(body);
-      return result;
-    } catch (err) {
-      throw err;
-    }
-  }
-
   @Delete('/delete')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ title: 'delete product from cart' })
-  async deleteProduct(@Body() body: DeleteProductDTO): Promise<any> {
+  async deleteProduct(@Query() params,@Res() res: Response): Promise<any> {
     try {
-      const result = await this.CartService.deleteProduct(body);
-      return result;
+      const result = await this.CartService.deleteProduct(params.userId,params.productId);
+      return res.json(result);
     } catch (err) {
       throw err;
     }

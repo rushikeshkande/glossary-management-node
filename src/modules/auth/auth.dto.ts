@@ -28,6 +28,14 @@ export class RegisterDTO {
   file: any;
 }
 
+export class ForgotDTO {
+  @ApiModelProperty({ description: 'user email', required: true})
+  email: string;
+
+  @ApiModelProperty({ description: 'user password', required: true})
+  password: string;
+}
+
 export interface Payload {
   email: string;
   id: string;

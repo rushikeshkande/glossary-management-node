@@ -10,22 +10,40 @@ export const CartSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'user',
     },
+    productName: {
+      default: null,
+      type: String,
+      required: true
+    },
+    productImage: {
+      default: null,
+      type: String,
+      required: true
+    },
     price: {
       default: 0,
       type: Number,
+      required: true
+    },
+    oldPrice: {
+      default: 0,
+      type: Number,
+      required: true
     },
     discount: {
       default: 0,
-      type: Number
+      type: Number,
+      required: true
     },
     quantity: {
       type: Number,
       required: true,
-      min: [1, 'Quantity can not be less then 1.'],
+      default: 1
     },
     isActive: {
       type: Boolean,
-      default: true
+      default: true,
+      required: true
     }
   },
   {

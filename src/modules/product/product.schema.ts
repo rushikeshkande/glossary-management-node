@@ -7,5 +7,7 @@ export const ProductSchema = new mongoose.Schema({
     price: Number,
     quantity: {type: Number, default: 1},
     discount: Number,
-    productImage: {type: String, default: null}
+    productImage: {type: [String], default: null},
+    oldPrice: Number,
+    description: String
 })

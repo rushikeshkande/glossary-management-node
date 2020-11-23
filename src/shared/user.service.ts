@@ -8,19 +8,18 @@ import { Payload } from '../modules/auth/auth.dto';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectModel('user') private userModel: Model) {}
+  constructor(@InjectModel('user') private userModel: Model) {}
 
-  async create(userDTO: RegisterDTO,file:any) {
+  async create(userDTO: RegisterDTO, file: any) {
     const { email } = userDTO;
     const user = await this.userModel.findOne({ email });
     if (user) {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     }
-    if(file) {
-      const fileData:any = await awsupload(file);
-      userDTO["profile"] = fileData.Location;
-    } 
+    if (file) {
+      const fileData: any = await awsupload(file);
+      userDTO['profile'] = fileData.Location;
+    }
     const createdUser = new this.userModel(userDTO);
     await createdUser.save();
     return this.sanitizeUser(createdUser);
@@ -52,5 +51,21 @@ export class UserService {
     const sanitized = user.toObject();
     delete sanitized['password'];
     return sanitized;
+  }
+
+  async userForgotPassword(payload: any): Promise<any> {
+    const { email, password } = payload;
+    const user = await this.userModel.findOne({ email });
+    if (user) {
+      const hashed = await bcrypt.hash(password, 10);
+      const result = await this.userModel.findOneAndUpdate(
+        { email: email },
+        { password: hashed },
+        { new: true },
+      );
+      return result;
+    } else {
+      throw new HttpException('User does not exists', HttpStatus.BAD_REQUEST);
+    }
   }
 }

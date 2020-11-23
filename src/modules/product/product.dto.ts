@@ -21,4 +21,7 @@ export class AddProduct {
 
     @ApiModelProperty({ description: "product discount"})
     discount: number;
+
+    @ApiModelProperty({ description:"product old price"})
+    oldPrice: number;
 }

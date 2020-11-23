@@ -9,7 +9,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiConsumes, ApiImplicitFile } from '@nestjs/swagger';
 import { UserService } from '../../shared/user.service';
-import { Payload } from './auth.dto';
+import { ForgotDTO, Payload } from './auth.dto';
 import { LoginDTO, RegisterDTO } from './auth.dto';
 import { AuthService } from './auth.service';
 
@@ -44,5 +44,12 @@ export class AuthController {
       };
       const token = await this.authService.signPayload(payload);
       return { user, token };
+  }
+
+  @Post('forgot')
+  @ApiOperation({ title: 'forgot password'})
+  async forgotPassword(@Body() body: ForgotDTO) {
+    const result = await this.userService.userForgotPassword(body);
+    return result;
   }
 }

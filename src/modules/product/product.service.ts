@@ -1,9 +1,6 @@
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import {
-  Injectable,
-} from '@nestjs/common';
-
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ProductService {
@@ -19,7 +16,15 @@ export class ProductService {
   }
 
   async getProductById(id): Promise<any> {
-    const result = await this.productModel.findOne({ _id : id});
+    const result = await this.productModel.findOne({ _id: id });
     return result;
+  }
+
+  async getProductByName(name): Promise<any> {
+    const regex = new RegExp(name, 'i');
+    const searchResult = await this.productModel.find({
+      name: { $regex: regex }
+    });
+    return searchResult;
   }
 }

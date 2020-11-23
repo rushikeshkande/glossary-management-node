@@ -6,7 +6,6 @@ import * as Express from 'express';
 import * as cors from 'cors';
 import { ExpressAdapter } from '@nestjs/platform-express';
 
-
 const server = Express();
 server.use(cors());
 server.get('/', (req, res) => res.send('ok'));

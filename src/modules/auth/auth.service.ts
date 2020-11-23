@@ -27,16 +27,16 @@ export class AuthService {
     const params = {
       Body: file.buffer,
       Bucket: bucketS3,
-      Key: String(originalname)
+      Key: String(originalname),
     };
     return new Promise((resolve, reject) => {
       s3.upload(params, (err, data) => {
-      if (err) {
+        if (err) {
           Logger.error(err);
           reject(err.message);
-      }
-      resolve(data);
+        }
+        resolve(data);
       });
-  });
+    });
   }
 }
